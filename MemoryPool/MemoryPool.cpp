@@ -13,30 +13,18 @@ MemoryPool<T, Blocksize>::padPointer(data_pointer_ p, size_type align) const noe
 template<typename T, size_t Blocksize>
 MemoryPool<T, Blocksize>::MemoryPool() noexcept
 {
-	currentBlock_ = 0;
-	currentSlot_ = 0;
-	lastSlot_ = 0;
-	freeSlots_ = 0;
+	BlockListHead_ = 0;
+	SlotListHead_  = 0;
+	lastSlot_      = 0;
+	FreeSlotHead   = 0;
 } 
-// 复制构造函数
-template<typename T, size_t Blocksize>
-MemoryPool<T, Blocksize>::MemoryPool(const MemoryPool&memorypool)noexcept
-{
-	MemoryPool();
-}
-// 复制构造函数
-template<typename T, size_t Blocksize>
-template<class U>
-MemoryPool<T, Blocksize>::MemoryPool(const MemoryPool<U>&memorypool) noexcept
-{
-	MemoryPool();
-}
+
 // 析构函数，delete内存池中所有的block
 template<typename T, size_t Blocksize>
 MemoryPool<T, Blocksize>::~MemoryPool()
 noexcept
 {
-	slot_pointer_ curr = currentBlock_;
+	slot_pointer_ curr = BlockListHead_;
 	while (curr != nullptr)//curr!=NULL
 	{
 		slot_pointer_ prev = curr->next;
@@ -67,14 +55,14 @@ void MemoryPool<T, Blocksize>::allocateBlock()
 {
 	// operator new（）申请一块Blocksize大小的内存
 	data_pointer_ newBlock = reinterpret_cast<data_pointer_>(operator new(Blocksize));
-	// 新Block链表头 currentBlock_
-	reinterpret_cast<slot_pointer_>(newBlock)->next = currentBlock_;
-	currentBlock_ = reinterpret_cast<slot_pointer_>(newBlock);
+	// 新Block链表头 BlockListHead_
+	reinterpret_cast<slot_pointer_>(newBlock)->next = BlockListHead_;
+	BlockListHead_ = reinterpret_cast<slot_pointer_>(newBlock);
 	// 计算为了对齐应该空出多少位置
 	data_pointer_ body = newBlock + sizeof(slot_pointer_);
 	size_type bodyPadding = padPointer(body, sizeof(slot_type_));
 	// currentslot_ 为该 block 开始的地方加上 bodypadding 个 char* 空间
-	currentSlot_ = reinterpret_cast<slot_pointer_>(body + bodyPadding);
+	SlotListHead_ = reinterpret_cast<slot_pointer_>(body + bodyPadding);
 	// 计算最后一个能放下slot_type_的位置
 	lastSlot_ = reinterpret_cast<slot_pointer_>(newBlock + Blocksize - sizeof(slot_type_) + 1);
 }
@@ -85,18 +73,18 @@ inline typename MemoryPool<T, Blocksize>::pointer
 MemoryPool<T, Blocksize>::allocate(size_type n, const_pointer hint)
 {
 	// 如果freeSlot_非空，就在freeSlot_中去取内存
-	if (freeSlots_ != nullptr)
+	if (FreeSlotHead != nullptr)
 	{
-		pointer result = reinterpret_cast<pointer>(freeSlots_);
-		freeSlots_ = freeSlots_->next;
-		return result;
+		pointer pElement = reinterpret_cast<pointer>(FreeSlotHead);
+		FreeSlotHead = FreeSlotHead->next;
+		return pElement;
 	}
 	else
 	{
 		// Block中内存用完的情况
-		if (currentSlot_ >= lastSlot_)
+		if (SlotListHead_ >= lastSlot_)
 			allocateBlock();
-		return reinterpret_cast<pointer>(currentSlot_++);
+		return reinterpret_cast<pointer>(SlotListHead_++);
 	}
 }
 // 将元素内存归还free内存链表
@@ -107,8 +95,8 @@ MemoryPool<T, Blocksize>::deallocate(pointer p, size_type n)
 	if (p != nullptr)
 	{
 		// 转换成slot_pointer_指针，next指向freeslots_链表
-		reinterpret_cast<slot_pointer_>(p)->next = freeSlots_;
-		freeSlots_ = reinterpret_cast<slot_pointer_>(p);
+		reinterpret_cast<slot_pointer_>(p)->next = FreeSlotHead;
+		FreeSlotHead = reinterpret_cast<slot_pointer_>(p);
 	}
 }
 
@@ -118,7 +106,7 @@ inline typename MemoryPool<T, Blocksize>::size_type
 MemoryPool<T, Blocksize>::max_size()
 const noexcept
 {
-	size_type maxBlocks = 1 / Blocksize;
+	size_type maxBlocks = -1 / Blocksize;
 	return ((Blocksize - sizeof(data_pointer_)) / sizeof(slot_type_)*maxBlocks);
 }
 
@@ -148,10 +136,10 @@ inline typename  MemoryPool<T, Blocksize>::pointer
 MemoryPool<T, Blocksize>::newElement(Args&&... args)
 {
 	// 申请内存
-	pointer result = allocate();
+	pointer pElement = allocate();
 	// 在内存上构造对象
-	construct<value_type>(result, std::forward<Args>(args)...);
-	return result;
+	construct<value_type>(pElement, std::forward<Args>(args)...);
+	return pElement;
 }
 // 删除元素
 template<typename T, size_t Blocksize>

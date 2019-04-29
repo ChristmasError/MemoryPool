@@ -22,26 +22,27 @@ int main()
 	clock_t  start;
 
 	MemoryPool<testdata>pool;
-	
+
+	int a =  1;
 	start = clock();
 	for (int i = 0; i < REPS; i++)
 	{
 		for (int j = 0; j < ELEMS; j++)
-		{
-			testdata a(0);
-			testdata *p = pool.newElement(a);
+		{	
+			//对于自定义结构
+			testdata *p =pool.newElement(1);
 			pool.deleteElement(p);
 		}
 	}
 	cout << "MemoryPool run time : " << (((double)clock() - start) / CLOCKS_PER_SEC) << endl;
-	cout << pool.max_size() << endl;
+	//cout << pool.max_size() << endl;
 	start = clock();
 	for (int i = 0; i < REPS; ++i)
 	{
 		for (int j = 0; j< ELEMS; ++j)
 		{
-			testdata *x = new testdata(1);
-
+			// testdate* x = new testdata(1);
+			int *x = new int(a);
 			delete x;
 		}
 	}
