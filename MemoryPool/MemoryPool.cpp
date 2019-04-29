@@ -112,7 +112,7 @@ MemoryPool<T, Blocksize>::deallocate(pointer p, size_type n)
 	}
 }
 
-// 计算最大元素上限数
+// 计算最大元素上限数 
 template<typename T, size_t Blocksize>
 inline typename MemoryPool<T, Blocksize>::size_type
 MemoryPool<T, Blocksize>::max_size()
