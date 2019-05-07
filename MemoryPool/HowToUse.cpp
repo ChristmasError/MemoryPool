@@ -3,7 +3,8 @@
 #include<cassert>
 #include<stack>
 #include<vector>
-
+#include<windows.h>
+#include<stdio.h>
 #include"memorypool.h"
 #include"memorypool.cpp"
 using namespace std;
@@ -15,14 +16,13 @@ public:
 	testdata() {};
 	testdata(int data) :a(data) {};
 };
-#define ELEMS 100000
-#define REPS 50
+#define ELEMS 1000
+#define REPS 5000
 int main()
 {
 	clock_t  start;
 
-	MemoryPool<testdata>pool;
-
+	MemoryPool<testdata,4096>pool;
 	int a =  1;
 	start = clock();
 	for (int i = 0; i < REPS; i++)
@@ -35,7 +35,7 @@ int main()
 		}
 	}
 	cout << "MemoryPool run time : " << (((double)clock() - start) / CLOCKS_PER_SEC) << endl;
-	//cout << pool.max_size() << endl;
+
 	start = clock();
 	for (int i = 0; i < REPS; ++i)
 	{
