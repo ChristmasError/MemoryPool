@@ -15,15 +15,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="MemoryPool.cpp">
+    <ClCompile Include="HowToUse.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="HowToUse.cpp">
+    <ClCompile Include="memory_pool.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MemoryPool.h">
+    <ClInclude Include="memory_pool.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
