@@ -5,8 +5,8 @@
 #include<vector>
 #include<windows.h>
 #include<stdio.h>
-#include"memorypool.h"
-#include"memorypool.cpp"
+#include"memory_pool_class.h"
+#include"memory_pool_class.cpp"
 using namespace std;
 
 class testdata{

@@ -18,12 +18,12 @@
     <ClCompile Include="HowToUse.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="memory_pool.cpp">
+    <ClCompile Include="memory_pool_class.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="memory_pool.h">
+    <ClInclude Include="memory_pool_class.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
