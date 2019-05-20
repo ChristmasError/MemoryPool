@@ -1,9 +1,9 @@
 #pragma once 
 
-#include"memory_pool_class.h"
+#include "memory_pool_class.h"
 
 template<typename T, size_t Blocksize>
-inline typename MemoryPool<T, Blocksize>::size_type 
+inline typename MemoryPool<T, Blocksize>::size_type
 MemoryPool<T, Blocksize>::padPointer(data_pointer_ p, size_type align) const noexcept
 {
 	size_t result = reinterpret_cast<size_t>(p);
@@ -14,10 +14,10 @@ template<typename T, size_t Blocksize>
 MemoryPool<T, Blocksize>::MemoryPool() noexcept
 {
 	BlockListHead_ = 0;
-	SlotListHead_  = 0;
-	lastSlot_      = 0;
-	FreeSlotHead   = 0;
-} 
+	SlotListHead_ = 0;
+	lastSlot_ = 0;
+	FreeSlotHead = 0;
+}
 
 // 析构函数，delete内存池中所有的block
 template<typename T, size_t Blocksize>

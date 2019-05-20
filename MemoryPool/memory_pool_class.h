@@ -1,7 +1,7 @@
 #pragma once
 
-#include<climits>
-#include<cstddef>
+#include <climits>
+#include <cstddef>
 
 template<typename T, size_t Blocksize = 4096>
 class MemoryPool
@@ -31,7 +31,7 @@ public:
 
 	pointer allocate(size_type n = 1, const_pointer hint = 0);			// 向内存池申请内存资源
 	void deallocate(pointer p, size_type n = 1);						// 将内存资源返回给内存池			
-	// 内存池元素的构造&析构
+																		// 内存池元素的构造&析构
 	template <class U, class... Args>void construct(U* p, Args&&... args);
 	template <class U> void destroy(U* p);
 
@@ -42,8 +42,8 @@ private:
 		value_type element;
 		Slot_*	   next;
 	};
-	typedef char*       data_pointer_;      
-	typedef Slot_       slot_type_;			
+	typedef char*       data_pointer_;
+	typedef Slot_       slot_type_;
 	typedef Slot_*		slot_pointer_;
 
 	slot_pointer_	BlockListHead_;			// 内存块链表头指针
